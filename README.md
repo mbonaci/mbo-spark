@@ -163,7 +163,7 @@ Since I have successfully built Spark with _mvn_ I have never used _sbt_, so you
 
 Yes, that was my general feeling when I first launched a Spark master
 
-![spark-repl](https://github.com/mbonaci/mbo-spark/resources/spark-repl.png?raw=true)
+![spark-repl](https://raw.github.com/mbonaci/mbo-spark/master/resources/spark-repl.png)
 
 ### How to get there
 
@@ -184,7 +184,7 @@ if you need more info on how the startup process works, take a look [here](http:
 
 To check out Spark web console, open http://localhost:8080/
 
-![master's web console](https://github.com/mbonaci/mbo-spark/resources/spark-web-console.gif?raw=true)
+![master's web console](https://raw.github.com/mbonaci/mbo-spark/master/resources/spark-web-console.gif)
 
 ### Starting slave workers
 
@@ -228,15 +228,15 @@ Now we've hopefully prepared everything so we can finally launch 4 slave workers
 
 You should see something similar to this:
 
-![4 slaves start](https://github.com/mbonaci/mbo-spark/resources/spark-4-slaves-started.png?raw=true)
+![4 slaves start](https://raw.github.com/mbonaci/mbo-spark/master/resources/spark-4-slaves-started.png)
 
 If you now refresh master's web console, you should see 4 slaves listed there:
 
-![4 slaves in web console](https://github.com/mbonaci/mbo-spark/resources/spark-master-web-console-4-slaves.gif?raw=true)
+![4 slaves in web console](https://raw.github.com/mbonaci/mbo-spark/master/resources/spark-master-web-console-4-slaves.gif)
 
 Clicking on a slave's link opens its web console:
 
-![slave web console](https://github.com/mbonaci/mbo-spark/resources/spark-slaves-web-console.gif?raw=true)
+![slave web console](https://raw.github.com/mbonaci/mbo-spark/master/resources/spark-slaves-web-console.gif)
 
 ### Starting and stopping the whole cluster
 
@@ -293,7 +293,7 @@ To launch Spark Scala interpreter:
 MASTER=spark://localhost:7077 ./spark-shell
 ```
 
-![spark repl](https://github.com/mbonaci/mbo-spark/resources/spark-repl.png?raw=true)
+![spark repl](https://raw.github.com/mbonaci/mbo-spark/master/resources/spark-repl.png)
 
 ### Hello Spark
 
