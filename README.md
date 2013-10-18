@@ -178,7 +178,7 @@ Since I have successfully built Spark with _mvn_ I have never used _sbt_, so you
 
 > ... IN MY HOME, in my bedroom, where my wife sleeps! Where my children come to play with their toys. In my home.
 
-Yes, that was my general feeling when I first launched a Spark master
+Yes, that was my general feeling when I first connected to a master with Scala interpreter:
 
 ![spark-repl](https://raw.github.com/mbonaci/mbo-spark/master/resources/spark-repl.png)
 
@@ -201,7 +201,7 @@ if you need more info on how the startup process works, take a look [here](http:
 
 To check out Spark web console, open http://localhost:8080/
 
-![master's web console](https://raw.github.com/mbonaci/mbo-spark/master/resources/spark-web-console.gif)
+![master's web console](https://raw.github.com/mbonaci/mbo-spark/master/resources/spark-web-console.png)
 
 ### Starting slave workers
 
