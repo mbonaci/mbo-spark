@@ -1,8 +1,8 @@
 Getting started with Spark
----
+-----
 
 This tutorial was written in _October 2013._  
-At the time, the current version of Spark was 0.9.0.  
+At the time, the current development version of Spark was 0.9.0.  
 
 The tutorial covers Spark setup on Ubuntu 12.04:
 - installation of all Spark prerequisites
@@ -11,7 +11,7 @@ The tutorial covers Spark setup on Ubuntu 12.04:
 - standalone cluster setup (one master and 4 slaves on a single machine)
 - running the PI (3.14) approximation job on a standalone cluster
 
-Next part of this series will cover Spark setup in Eclipse.
+Next part of this (soon to be) series will cover Spark setup in Eclipse.
 
 ### My setup
 _Before installing Spark:_
@@ -21,41 +21,50 @@ _Before installing Spark:_
 - Maven 3.0.4
 - Python 2.7.3 (you already have this)
 - Git 1.7.9.5  (and this, I presume)
+  
+  
+The official one-liner describes Spark as "a general purpose cluster computing platform".  
 
-
-Official one-liner describes Spark as "a general purpose cluster computing platform".  
-
-Spark was conceived and developed at Berkeley labs. It is currently incubated at Apache and improved and maintained by a rapidly growing community of users, thus expected to graduate to top-level project very soon.  
+Spark was conceived and developed at Berkeley labs. It is currently incubated at Apache and improved and maintained by a rapidly growing community of users, thus it's expected to graduate to top-level project very soon.  
 It's written mainly in Scala, and provides Scala, Java and Python APIs.  
 Scala API provides a way to write concise, higher level routines that effectively manipulate distributed data.  
 
-Here's a quick example of how straightforward it is to distribute the data with Scala:
+Here's a quick example of how straightforward it is to distribute some arbitrary data with Scala API:
 
 ```scala
-// parallelized collection example, executed in Scala interpreter (also called 'repl')
-scala> val data = Array(1, 2, 3, 4, 5)   // declare scala array
-data: Array[Int] = Array(1, 2, 3, 4, 5)  // Scala interpreter response
+// parallelized collection example
+// example used Scala interpreter (also called 'repl') as an interface to Spark
 
-// distribute the array throughout cluster:
-scala> val distData = sc.parallelize(data)  // sc is an instance of SparkCluster
+// declare scala array:
+scala> val data = Array(1, 2, 3, 4, 5)
+
+// Scala interpreter responds with:
+data: Array[Int] = Array(1, 2, 3, 4, 5)
+
+// distribute the array in a cluster:
+scala> val distData = sc.parallelize(data)
+
+// sc is an instance of SparkCluster that's initialized for you by Scala repl
 
 // returns Resilient Distributed Dataset:
 distData: spark.RDD[Int] = spark.ParallelCollection@88eebe8e  // repl output
 ```
 
 ## What the hell is RDD?
-**Resilient Distributed Dataset** is a collection of elements that are distributed _all over_ the Spark cluster. RDDs' main purpose is to support higher-level parallel operations on data.  
-There are currently two types of RDDs: **parallelized collections**, which take an existing Scala collection and run functions on it in parallel, and **Hadoop** datasets, which run functions on each record of a file in _HDFS_ (or any other storage system supported by _Hadoop_).
+**Resilient Distributed Dataset** is a collection that has been distributed _all over_ the Spark cluster. RDDs' main purpose is to support higher-level, parallel operations on data in a straightforward manner.  
+There are currently two types of RDDs: **parallelized collections**, which take an existing Scala collection and run operations on it in parallel, and **Hadoop** datasets, which run functions on each record of a file in _HDFS_ (or any other storage system supported by _Hadoop_).
 
 ## Prereqs
-Let's get the requirements out of the way.  
+First, let's get the requirements out of the way.  
 
 ### Installing prereqs
 
-**Install oracle-java-6**
-Since Oracle, after they bought Java changed license agreement (not in a good way), Canonical only provides PPAs for OpenJRE/OpenJDK, and since we need oracle's version of java (I had some weird problems while building Spark with OpenJDK - probably due to the fact that open-jdk places jars in /usr/share/java, I'm not sure, but this installation fixed those problems), we'll need to install it and set it as default JVM on our system. Here's how:
+**Install oracle-java-6**  
+Since Oracle, after they acquired Java from Sun, changed license agreement (not in a good way), Canonical only provides PPAs (_personal package archive_) for OpenJRE/OpenJDK. Since we need oracle's version of java (we probably don't, but I had some weird problems while building Spark with OpenJDK - presumably due to the fact that open-jdk places jars in `/usr/share/java`, I'm not really sure, but installation of oracle-java effectively solved all those problems), we'll need to install it and set it to be the default JVM on our system.  
 
-```shell
+Here's how:
+
+```sh
 # you may or may not want to remove open-jdk (not necessary):
 $ sudo apt-get purge openjdk*
 
@@ -74,11 +83,12 @@ $ sudo apt-get install oracle-java6-set-default
 
 **Check/set JAVA_HOME**
 
-```shell
-# check default java version (if needed reconfigure by selecting another number)
+```sh
+# check default java version
+# if needed, reconfigure by selecting another number
 sudo update-alternatives --config java
-# this sets target of the `java` symbolic link in /etc/alternatives/
-# which you can check with:
+# this sets the target of the `java` symbolic link in /etc/alternatives/
+# which you can confirm with:
 file `which java`
 
 # for good measure, I like to set JAVA_HOME explicitly (Spark checks for its existence)
@@ -91,15 +101,20 @@ source ~/.bashrc
 echo $JAVA_HOME
 ```
 
-- Having problems with Java setup? [Check current Ubuntu docs.](https://help.ubuntu.com/community/Java)
+- Having problems with Java setup? [Check the latest Ubuntu Java documentation](https://help.ubuntu.com/community/Java).
 
 **Install Scala**
 - download 2.9.3 binaries for your OS from [here](http://www.scala-lang.org/download/2.9.3.html). Debian/Ubuntu [direct download link](http://www.scala-lang.org/files/archive/scala-2.9.3.deb)
-- install with the standard installation procedure for your OS. To install `.deb` package fire in terminal: `sudo dpkg -i scala-2.9.3.deb` or simply double-click on it
+- to install Scala `deb`, simply fire in terminal: 
+
+```sh
+sudo dpkg -i scala-2.9.3.deb
+```
 
 **Check/set SCALA_HOME**
 
-```shell
+```sh
+# append a line in .bashrc
 echo "export SCALA_HOME=/usr/share/java/" >> ~/.bashrc
 
 # to reload .bashrc just execute bash
@@ -110,23 +125,23 @@ source ~/.bashrc
 _Skip if you'll choose to install Spark from binaries (see the next section for more info)_
 This one is dead simple: 
 
-```shell
+```sh
 sudo apt-get install maven
 ```
 
 Be warned, a large download will take place.  
-It is flat out awful that a dependency & build management tool may become so bloated that it weighs this much. But that's a whole different story...
+It is flat out awful that a dependency & build management tool may become so bloated that it weighs this much, but that's a whole different story...
 
 ## Installing Spark
 We'll try, like a couple of hoodlums, to build the cutting edge, development version of Spark ourselves. Screw binaries, right :)  
   
-If you were to say that this punk move will just complicate things, you wouldn't be far from truth. So, if you want to simplify things a bit, and avoid possible dev-version bugs down the road, go ahead and download (and install) Spark binaries from [here](http://spark.incubator.apache.org/downloads.html). If, on the other hand, you're not scared, keep following instructions. Just kidding. No, honestly, I really suggest that you use binaries (and skip to [OMG! section](#omg!-i-have-a-running-spark-in-my-home)).
+If you were to say that this punk move will just complicate things, you wouldn't be far from truth. So, if you want to simplify things a bit, and avoid possible dev-version bugs down the road, go ahead and download (and install) Spark binaries from [here](http://spark.incubator.apache.org/downloads.html). If, on the other hand, you're not scared, keep following instructions. Just kidding. No, honestly, I really suggest that you use binaries (and skip to [OMG! section](#omg-i-have-a-running-spark-in-my-home)).
 
-> Back to the story, so my grandma was building Spark the other day and she noticed a couple of build errors...
+> Back to the story, so my grandma was building the Spark from source the other day and she noticed a couple of build errors...
 
 - to get the Spark source code:
 
-```shell
+```sh
 # clone the development repo
 git clone git://github.com/apache/incubator-spark.git
 
@@ -143,14 +158,14 @@ cd spark
 > Spark will build against Hadoop 1.0.4 by default, so if you want to read from HDFS (optional), use the correct version of Hadoop. If not, choose any version.
 > For more options, take a look [here](http://spark.incubator.apache.org/docs/latest/building-with-maven.html).
 
-```shell
+```sh
 # with Maven
 mvn -Phadoop2-yarn -Dhadoop.version=2.0.5-alpha -Dyarn.version=2.0.5-alpha -DskipTests clean package
 ```
 
 - or **sbt** (Scala build tool):
 
-```shell
+```sh
 # with sbt
 sbt/sbt assembly
 ```
@@ -171,12 +186,12 @@ OK, we installed all the prerequisites and successfully built Spark. Now it's fi
 
 To get the ball rolling, start the Spark master:
 
-```shell
-# to start Spark master on your localhost:
+```sh
+# to start the Spark master on your localhost:
 ./bin/start-master.sh
 
-# outputs master class and log file info:
-starting org.apache.spark.deploy.master.Master, logging to /opt/spark/bin/../
+# outputs master's class and log file info:
+starting org.apache.spark.deploy.master.Master, logging to /home/mbo/spark/bin/../
 logs/spark-mbo-org.apache.spark.deploy.master.Master-1-mbo-ubuntu-vbox.out
 ```
 
@@ -196,7 +211,7 @@ If your private key (usually `~/.ssh/rsa_id`) has a password, follow [these inst
 
 Next, we'll need to get `openssh server` up and running:
 
-```shell
+```sh
 # to install openssh-server (Ubuntu comes only with ssh client)
 sudo apt-get install openssh-server
 
@@ -211,7 +226,7 @@ service ssh start
 
 To tell Spark to run 4 workers on each slave machine, we'll create a new config file:
 
-```shell
+```sh
 # create spark-env.sh file using a provided template
 cp ./conf/spark-env.sh.template ./conf/spark-env.sh
 
@@ -221,7 +236,7 @@ echo "export SPARK_WORKER_INSTANCES=4" >> ./conf/spark-env.sh
 
 Now we've hopefully prepared everything so we can finally launch 4 slave workers, on the same machine where our master is already lurking around (slaves will be assigned with random ports, thus avoiding port collision)
 
-```shell
+```sh
 # to start slave workers on your localhost:
 ./bin/start-slaves.sh
 ```
@@ -242,7 +257,7 @@ Clicking on a slave's link opens its web console:
 
 Since you're going to start and stop master and slaves multiple times, let's quickly go through the simplified procedure of starting and stopping the cluster with one command:
 
-```shell
+```sh
 # first, let's stop the master and all the slaves:
 ./bin/stop-all.sh
 
@@ -254,7 +269,7 @@ Since you're going to start and stop master and slaves multiple times, let's qui
 I regularly configure log4j to write to a log file, instead of a console.
 If you'd like to setup the same thing yourself, you'll need to modify `log4j.properties` located in `spark/conf/` directory like this:
 
-```shell
+```sh
 # Initialize root logger
 log4j.rootLogger=INFO, FILE
 # Set everything to be logged to the console
@@ -267,18 +282,18 @@ log4j.logger.org.eclipse.jetty=WARN
 log4j.appender.FILE=org.apache.log4j.FileAppender
 
 # Change the path to where you want the log file to reside
-log4j.appender.FILE.File=/opt/spark/logs/SparkOut.log
+log4j.appender.FILE.File=/mbo/spark/logs/SparkOut.log
 
 # Prettify output a bit
 log4j.appender.FILE.layout=org.apache.log4j.PatternLayout
 log4j.appender.FILE.layout.ConversionPattern=%d{yy/MM/dd HH:mm:ss} %p %c{1}: %m%n
 ```
 
-To assure that Spark will be able to find log4j.properties, I suggest you create a new `java-opts` file in `spark/conf/` directory and place a single line inside:
+To assure that Spark will be able to find `log4j.properties`, I suggest you create a new `java-opts` file in `spark/conf/` directory and place a single line inside:
 
-```shell
-# tell Spark where log4j configuration is (modify if your Spark root is not in /opt)
--Dlog4j.configuration=file:///opt/spark/conf/log4j.properties
+```sh
+# tell Spark where log4j configuration is (modify file path, of course)
+-Dlog4j.configuration=file:///mbo/spark/conf/log4j.properties
 ```
 
 FYI, the same thing can be accomplished using `SPARK_JAVA_OPTS` param in `spark-env.sh`.
@@ -288,7 +303,7 @@ FYI, the same thing can be accomplished using `SPARK_JAVA_OPTS` param in `spark-
 Now we are ready for our first interactive session with Spark.
 To launch Spark Scala interpreter:
 
-```shell
+```sh
 ## launch scala repl
 MASTER=spark://localhost:7077 ./spark-shell
 ```
@@ -300,16 +315,18 @@ MASTER=spark://localhost:7077 ./spark-shell
 As a demonstration, let's use our Spark cluster to approximate _PI_ using [MapReduce](http://hadoop.apache.org/docs/stable/mapred_tutorial.html):  
 
 ```scala
+/* throwing darts and examining coordinates */
 val NUM_SAMPLES = 100000
 val count = spark.parallelize(1 to NUM_SAMPLES).map(i =>
   val x = Math.random
   val y = Math.random
-  if (x*x + y*y < 1) 1.0 else 0.0
+  if (x * x + y * y < 1) 1.0 else 0.0
 ).reduce(_ + _)
+
 println("Pi is roughly " + 4 * count / NUM_SAMPLES)
 ```
 
-If you're not comfortable with Scala, I recently wrote a [Java developer's Scala cheat sheet](http://mbonaci.github.io/scala/), which is basically a big reference card, where you can look up almost any Scala topic you can think of (based on Programming in Scala SE book, by Martin Odersky, whose first edition is freely available [online](http://www.artima.com/pins1ed/))
+If you're not comfortable with Scala, I recently wrote a [Java developer's Scala cheat sheet](http://mbonaci.github.io/scala/) (based on Programming in Scala SE book, by Martin Odersky, whose first edition is freely available [online](http://www.artima.com/pins1ed/)), which is basically a big reference card, where you can look up almost any Scala topic you come across.
 
 ## What Spark uses under the hood?
 
