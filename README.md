@@ -11,7 +11,9 @@ The tutorial covers Spark setup on Ubuntu 12.04:
 - standalone cluster setup (one master and 4 slaves on a single machine)
 - running the PI (3.14) approximation job on a standalone cluster
 
-Next part of this (soon to be) series will cover Spark setup in Eclipse.
+The next part of this (soon to be) series will cover Spark setup in Eclipse.  
+
+Although I have a handful of ideas for more sequels, we'll see what (if any) I'll actually get to cover ([Mesos](http://mesos.apache.org/), Bagel, MLlib, [Zookeeper](http://zookeeper.apache.org/), Spark integration with: _Hadoop, [Kafka](http://kafka.apache.org/), [Kiji](http://www.kiji.org/), [Storm](http://mbonaci.github.io/mbo-storm) ..._).
 
 ### My setup
 _Before installing Spark:_
@@ -81,7 +83,7 @@ $ sudo apt-get install oracle-java6-installer
 $ sudo apt-get install oracle-java6-set-default
 ```
 
-**Check/set JAVA_HOME**
+**Check/set `JAVA_HOME`**
 
 ```sh
 # check default java version
@@ -104,14 +106,14 @@ echo $JAVA_HOME
 - Having problems with Java setup? [Check the latest Ubuntu Java documentation](https://help.ubuntu.com/community/Java).
 
 **Install Scala**
-- download 2.9.3 binaries for your OS from [here](http://www.scala-lang.org/download/2.9.3.html). Debian/Ubuntu [direct download link](http://www.scala-lang.org/files/archive/scala-2.9.3.deb)
+- download 2.9.3 binaries for your OS from [here](http://www.scala-lang.org/download/2.9.3.html) or simply use Debian/Ubuntu [direct download link](http://www.scala-lang.org/files/archive/scala-2.9.3.deb)
 - to install Scala `deb`, simply fire in terminal: 
 
 ```sh
 sudo dpkg -i scala-2.9.3.deb
 ```
 
-**Check/set SCALA_HOME**
+**Check/set `SCALA_HOME`**
 
 ```sh
 # append a line in .bashrc
@@ -137,7 +139,7 @@ We'll try, like a couple of hoodlums, to build the cutting edge, development ver
   
 If you were to say that this punk move will just complicate things, you wouldn't be far from truth. So, if you want to simplify things a bit, and avoid possible dev-version bugs down the road, go ahead and download (and install) Spark binaries from [here](http://spark.incubator.apache.org/downloads.html). If, on the other hand, you're not scared, keep following instructions. Just kidding. No, honestly, I really suggest that you use binaries (and skip to [OMG! section](#omg-i-have-a-running-spark-in-my-home)).
 
-> Back to the story, so my grandma was building the Spark from source the other day and she noticed a couple of build errors...
+> Back to the story, so my grandma was building Spark from source the other day and she noticed a couple of build errors...
 
 - to get the Spark source code:
 
@@ -155,7 +157,7 @@ cd spark
 - to build Spark, we'll have to use either Maven:
 
 > But what these params bellow actually mean?
-> Spark will build against Hadoop 1.0.4 by default, so if you want to read from HDFS (optional), use the correct version of Hadoop. If not, choose any version.
+> Spark will build against Hadoop 1.0.4 by default, so if you want to read from HDFS (optional), use your version of Hadoop. If not, choose any version.
 > For more options, take a look [here](http://spark.incubator.apache.org/docs/latest/building-with-maven.html).
 
 ```sh
