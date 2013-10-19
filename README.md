@@ -2,14 +2,16 @@ Getting started with Spark
 -----
 
 This tutorial was written in _October 2013._  
-At the time, the current development version of Spark was 0.9.0.  
+At the time, the current development version of _Spark_ was **0.9.0.**  
 
-The tutorial covers Spark setup on Ubuntu 12.04:
+_The tutorial covers Spark setup on Ubuntu 12.04:_
 - installation of all Spark prerequisites
-- Spark installation
+- Spark build and installation
 - basic Spark configuration
 - standalone cluster setup (one master and 4 slaves on a single machine)
-- running the PI (3.14) approximation job on a standalone cluster
+- running the `math.PI` approximation job on a standalone cluster
+
+The tutorial does not cover reading from _HDFS_.
 
 The next part of this (soon to be) series will cover Spark setup in Eclipse.  
 
@@ -68,19 +70,19 @@ Here's how:
 
 ```sh
 # you may or may not want to remove open-jdk (not necessary):
-$ sudo apt-get purge openjdk*
+sudo apt-get purge openjdk*
 
 # to add PPA source repository to apt:
-$ sudo add-apt-repository ppa:webupd8team/java
+sudo add-apt-repository ppa:webupd8team/java
 
 # to refresh the sources list:
-$ sudo apt-get update
+sudo apt-get update
 
 # to install JDK 6:
-$ sudo apt-get install oracle-java6-installer
+sudo apt-get install oracle-java6-installer
 
 # to make JDK6 default JVM provider:
-$ sudo apt-get install oracle-java6-set-default
+sudo apt-get install oracle-java6-set-default
 ```
 
 **Check/set `JAVA_HOME`**
@@ -207,9 +209,12 @@ To check out Spark web console, open http://localhost:8080/
 
 > Our beloved master is lonely, with no one to boss around. Let's fix that.
 
-Spark _master_ requires passwordless `ssh` login to its _slaves_, and since we're building a standalone Spark cluster (master and all slaves on a single machine), we'll need to facilitate _localhost to localhost_ passwordless connection.
+Spark _master_ requires passwordless `ssh` login to its _slaves_, and since we're building a standalone Spark cluster, we'll need to facilitate _localhost to localhost_ passwordless connection.
 
-If your private key (usually `~/.ssh/rsa_id`) has a password, follow [these instructions](http://askubuntu.com/a/296574/116447) to get rid of it for connections from _localhost_.
+If your private key has a password, you'll need to generate a new key and copy its public part to `~/.ssh/authorized_keys`.
+Follow [these instructions](http://help.ubuntu.com/12.04/serverguide/openssh-server.html#openssh-keys) (and, if needed [these](http://askubuntu.com/a/296574/116447)) to allow only yourself to log in to your _openssh server_ without password.
+
+> Be careful not to open a door for malicious intrusion attempts. If you're new to `ssh`, [here](https://help.ubuntu.com/community/SSH) is a short and sweet intro to _openssh_.
 
 Next, we'll need to get `openssh server` up and running:
 
