@@ -61,10 +61,10 @@ There are currently two types of RDDs: **parallelized collections**, which take 
 ## Prereqs
 First, let's get the requirements out of the way.  
 
-### Installing prereqs
+### Install Oracle's JDK6
+Since Oracle, after they acquired Java from Sun, changed license agreement (not in a good way), Canonical no longer provides packages for Oracle's Java. Since we need oracle's version of java, we'll need to install it and set it to be the default JVM on our system.  
 
-**Install oracle-java-6**  
-Since Oracle, after they acquired Java from Sun, changed license agreement (not in a good way), Canonical only provides PPAs (_personal package archive_) for OpenJRE/OpenJDK. Since we need oracle's version of java (we probably don't, but I had some weird problems while building Spark with OpenJDK - presumably due to the fact that open-jdk places jars in `/usr/share/java`, I'm not really sure, but installation of oracle-java effectively solved all those problems), we'll need to install it and set it to be the default JVM on our system.  
+> We probably don't need Oracle's Java, but I had some weird problems while building Spark with OpenJDK - presumably due to the fact that open-jdk places jars in `/usr/share/java`, I'm not really sure, but installation of oracle-java effectively solved all those problems, so I haven't investigated any further what exactly happened there.
 
 Here's how:
 
@@ -80,49 +80,93 @@ sudo apt-get update
 
 # to install JDK 6:
 sudo apt-get install oracle-java6-installer
+```
 
-# to make JDK6 default JVM provider:
+That should install java and make it default, all in one go.  
+If you check with:
+
+```sh
+cd /etc/alternatives
+ls -lat
+```
+
+... you should see that `java` symlink points to JRE, that's inside our newly installed JDK:
+
+![java default](https://raw.github.com/mbonaci/mbo-spark/master/resources/java-default.png)
+
+If you see some other java version as default, you can fix that by executing either of these:
+
+```sh
+# to make oracle's jdk6 the default:
 sudo apt-get install oracle-java6-set-default
+
+# the other way of setting default java is:
+sudo update-alternatives --config java
+
+# are we good?
+file `which java`
+# should return:
+# /usr/bin/java: symbolic link to `/etc/alternatives/java'
+
+file /etc/alternatives/java
+# should return:
+# /etc/alternatives/java: symbolic link to `/usr/lib/jvm/java-6-oracle/jre/bin/java'
 ```
 
 **Check/set `JAVA_HOME`**
 
+For a good measure, I like to set `JAVA_HOME` explicitly (_Spark_ checks for its existence).
+
 ```sh
-# check default java version
-# if needed, reconfigure by selecting another number
-sudo update-alternatives --config java
-# this sets the target of the `java` symbolic link in /etc/alternatives/
-# which you can confirm with:
-file `which java`
+# check where it currently points
+echo $JAVA_HOME
+# if you're doing this on a fresh machine
+# and you just installed Java for the first time
+# JAVA_HOME should not be set (you get an empty line when you echo it)
 
-# for good measure, I like to set JAVA_HOME explicitly (Spark checks for its existence)
-echo "export JAVA_HOME=/usr/lib/jvm/java-6-oracle/" >> ~/.bashrc
+################## either set it system wide ####################
+sudo echo "JAVA_HOME=/usr/lib/jvm/java-6-oracle" >> /etc/environment
 
-# to reload .bashrc
-source ~/.bashrc
+# to reload
+source /etc/environment
 
-# try it out (should return /usr/lib/jvm/java-6-oracle/)
+################## or only for the current user #################
+echo "JAVA_HOME=/usr/lib/jvm/java-6-oracle/" >> ~/.pam_environment
+
+# to reload
+source ~/.pam_environment
+
+#################################################################
+
+# now try it out
 echo $JAVA_HOME
 ```
 
-- Having problems with Java setup? [Check the latest Ubuntu Java documentation](https://help.ubuntu.com/community/Java).
+> `.pam_environment` is the new `.bashrc`. [What?](https://help.ubuntu.com/community/EnvironmentVariables#Session-wide_environment_variables)
+  
+> Having problems with Java setup? Check the [latest Ubuntu Java documentation](https://help.ubuntu.com/community/Java).
 
-**Install Scala**
-- download 2.9.3 binaries for your OS from [here](http://www.scala-lang.org/download/2.9.3.html) or simply use Debian/Ubuntu [direct download link](http://www.scala-lang.org/files/archive/scala-2.9.3.deb)
-- to install Scala `deb`, simply fire in terminal: 
+### Install Scala
+- download 2.9.3 binaries for your OS from [here](http://www.scala-lang.org/download/2.9.3.html) (don't click the download link on top, scroll down to find `deb` download link, or simply use this [direct download link](http://www.scala-lang.org/files/archive/scala-2.9.3.deb))
+- the easiest way to install Scala from `deb` package is to simply double click on it, and let the _Ubuntu Software Center_ take care of you
 
 ```sh
-sudo dpkg -i scala-2.9.3.deb
+# to check whether the installation went well:
+scala -version
+
+# should spit out:
+Scala code runner version 2.9.3 -- Copyright 2002-2011, LAMP/EPFL
 ```
 
 **Check/set `SCALA_HOME`**
 
 ```sh
-# append a line in .bashrc
-echo "export SCALA_HOME=/usr/share/java/" >> ~/.bashrc
+# I'll set SCALA_HOME only for my user sessions
+# who knows, maybe my wife will like to use another version :)
+echo "SCALA_HOME=/usr/share/java" >> ~/.pam_environment
 
-# to reload .bashrc just execute bash
-source ~/.bashrc
+# again, same as with java, to reload:
+source ~/.pam_environment
 ```
 
 **Install Maven**
@@ -134,7 +178,7 @@ sudo apt-get install maven
 ```
 
 Be warned, a large download will take place.  
-It is flat out awful that a dependency & build management tool may become so bloated that it weighs this much, but that's a whole different story...
+It is flat out awful that a dependency & build management tool may become so bloated that it **weighs 146MB**, but that's a whole [different story](https://github.com/mbonaci/mbo-storm/wiki/Storm-setup-in-Eclipse-with-Maven,-Git-and-GitHub#a-note-about-maven)...
 
 ## Installing Spark
 We'll try, like a couple of hoodlums, to build the cutting edge, development version of Spark ourselves. Screw binaries, right :)  
@@ -146,35 +190,43 @@ If you were to say that this punk move will just complicate things, you wouldn't
 - to get the Spark source code:
 
 ```sh
-# clone the development repo
+# clone the development repo:
 git clone git://github.com/apache/incubator-spark.git
 
-# rename the folder
-mv incubator-spark/ spark
+# rename the folder:
+mv incubator-spark spark
 
-# go into it
+# go into it:
 cd spark
 ```
 
-- to build Spark, we'll have to use either Maven:
+- we'll use _Maven_ to build _Spark_:
 
-> But what these params bellow actually mean?
-> Spark will build against Hadoop 1.0.4 by default, so if you want to read from HDFS (optional), use your version of Hadoop. If not, choose any version.
-> For more options, take a look [here](http://spark.incubator.apache.org/docs/latest/building-with-maven.html).
+> But what these params bellow actually mean?  
+> Spark will build against Hadoop 1.0.4 by default, so if you want to read from HDFS (optional), use your version of Hadoop. If not, choose any version.  
+> For more options and additional details, take a look at the official [ instructions on building Spark with Maven](http://spark.incubator.apache.org/docs/latest/building-with-maven.html).
 
 ```sh
-# with Maven
+# first, to avoid the notorious 'permgen' error
+# increase the amount memory available to the JVM:
+export MAVEN_OPTS="-Xmx1300M -XX:MaxPermSize=512M -XX:ReservedCodeCacheSize=512m"
+
+# then trigger the build:
 mvn -Phadoop2-yarn -Dhadoop.version=2.0.5-alpha -Dyarn.version=2.0.5-alpha -DskipTests clean package
 ```
 
-- or **sbt** (Scala build tool):
+> If you did everything right, the build process should complete without a glitch, in about 15 to 30 minutes (downloads take the most of that time), depending on your hardware. The only type of notifications should be Scala deprecation and duplicate class warnings (both can be ignored).
 
-```sh
-# with sbt
-sbt/sbt assembly
-```
+You should see something like this by the end of the compilation process:
 
-Since I have successfully built Spark with _mvn_ I have never used _sbt_, so you're on your own there
+![spark-build-success](https://raw.github.com/mbonaci/mbo-spark/master/resources/spark-build-success.png)
+
+The above is from Ubuntu, with Core-i7-Quad 2.6GHz and 8GB of RAM.  
+And this is the same thing from Xubuntu, with Core-i5-Duo 3.2GHz and 4GB of RAM:
+
+![spark-build-success](https://raw.github.com/mbonaci/mbo-spark/master/resources/spark-build-success-xubuntu.png)
+
+> Since I have successfully built Spark with _mvn_ I have never used _sbt (Scala Build Tool)_ to build it, but that option is also available to you.
 
 ## OMG! I have a running Spark in my home
 
@@ -201,7 +253,7 @@ logs/spark-mbo-org.apache.spark.deploy.master.Master-1-mbo-ubuntu-vbox.out
 
 if you need more info on how the startup process works, take a look [here](http://spark.incubator.apache.org/docs/latest/spark-standalone.html).
 
-To check out Spark web console, open http://localhost:8080/
+To check out master's web console, open http://localhost:8080/. Nice, ha?
 
 ![master's web console](https://raw.github.com/mbonaci/mbo-spark/master/resources/spark-web-console.png)
 
@@ -211,18 +263,41 @@ To check out Spark web console, open http://localhost:8080/
 
 Spark _master_ requires passwordless `ssh` login to its _slaves_, and since we're building a standalone Spark cluster, we'll need to facilitate _localhost to localhost_ passwordless connection.
 
-If your private key has a password, you'll need to generate a new key and copy its public part to `~/.ssh/authorized_keys`.
-Follow [these instructions](http://help.ubuntu.com/12.04/serverguide/openssh-server.html#openssh-keys) (and, if needed [these](http://askubuntu.com/a/296574/116447)) to allow only yourself to log in to your _openssh server_ without password.
-
-> Be careful not to open a door for malicious intrusion attempts. If you're new to `ssh`, [here](https://help.ubuntu.com/community/SSH) is a short and sweet intro to _openssh_.
-
-Next, we'll need to get `openssh server` up and running:
+If your private key has a password, you'll need to generate a new key and copy its public part to `~/.ssh/authorized_keys`:
 
 ```sh
-# to install openssh-server (Ubuntu comes only with ssh client)
+# generate new public-private key pair:
+ssh-keygen
+
+# just press enter both times, when asked for password
+
+# to add your key to authorized keys list on your machine:
+ssh-copy-id mbo@mbo-xubuntu
+
+# where mbo is your username and mbo-xubuntu is the host name
+# confirm by typing 'yes' and then enter your login password when asked
+```
+
+That should look similar to this:
+
+![ssh-keygen](https://raw.github.com/mbonaci/mbo-spark/master/resources/ssh-keygen.png)
+
+> If you get stuck, follow [these instructions](http://help.ubuntu.com/12.04/serverguide/openssh-server.html#openssh-keys), and [these](http://askubuntu.com/a/296574/116447), if needed.
+  
+> Be careful not to open a door for malicious intrusion attempts. If you're new to `ssh`, [here](https://help.ubuntu.com/community/SSH) is a short and sweet intro to _openssh_.
+
+If you don't have `ssh` server installed, you'll need to get it:
+
+```sh
+# to check whether the openssh server is installed
+service ssh status
+
+# if that returns "unrecognized service", then follow instructions:
+
+# to install openssh-server (most Ubuntu versions come only with ssh client)
 sudo apt-get install openssh-server
 
-# then check whether the openssh server is started (should be)
+# then check whether the openssh server is up (should be automatically started)
 service ssh status
 
 # if not
@@ -234,17 +309,17 @@ service ssh start
 To tell Spark to run 4 workers on each slave machine, we'll create a new config file:
 
 ```sh
-# create spark-env.sh file using a provided template
+# create spark-env.sh file using the provided template:
 cp ./conf/spark-env.sh.template ./conf/spark-env.sh
 
-# append a configuration param to the end of the file
+# append a configuration param to the end of the file:
 echo "export SPARK_WORKER_INSTANCES=4" >> ./conf/spark-env.sh
 ```
 
-Now we've hopefully prepared everything so we can finally launch 4 slave workers, on the same machine where our master is already lurking around (slaves will be assigned with random ports, thus avoiding port collision)
+> Now we've hopefully prepared everything to finally launch 4 slave workers, on the same machine where our master is already lurking around (slaves will be assigned with random ports, thus avoiding port collision).
 
 ```sh
-# to start slave workers on your localhost:
+# to start slave workers:
 ./bin/start-slaves.sh
 ```
 
@@ -303,7 +378,7 @@ To assure that Spark will be able to find `log4j.properties`, I suggest you crea
 -Dlog4j.configuration=file:///mbo/spark/conf/log4j.properties
 ```
 
-FYI, the same thing can be accomplished using `SPARK_JAVA_OPTS` param in `spark-env.sh`.
+> FYI, the same thing can be accomplished using `SPARK_JAVA_OPTS` param in `spark-env.sh`.
 
 ## Playing with Spark
 
@@ -311,7 +386,7 @@ Now we are ready for our first interactive session with Spark.
 To launch Spark Scala interpreter:
 
 ```sh
-## launch scala repl
+# launch scala repl
 MASTER=spark://localhost:7077 ./spark-shell
 ```
 
