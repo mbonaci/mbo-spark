@@ -92,7 +92,7 @@ ls -lat
 
 ... you should see that `java` symlink points to JRE, that's inside our newly installed JDK:
 
-![java default](https://raw.github.com/mbonaci/mbo-spark/master/resources/java-default.png)
+![java default](https://raw.github.com/mbonaci/mbo-spark/master/resources/java-default.PNG)
 
 If you see some other java version as default, you can fix that by executing either of these:
 
