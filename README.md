@@ -280,7 +280,7 @@ ssh-copy-id mbo@mbo-xubuntu
 
 That should look similar to this:
 
-![ssh-keygen](https://raw.github.com/mbonaci/mbo-spark/master/resources/ssh-keygen.png)
+![ssh-keygen](https://raw.github.com/mbonaci/mbo-spark/master/resources/ssh-keygen-xubuntu.PNG)
 
 > If you get stuck, follow [these instructions](http://help.ubuntu.com/12.04/serverguide/openssh-server.html#openssh-keys), and [these](http://askubuntu.com/a/296574/116447), if needed.
   
