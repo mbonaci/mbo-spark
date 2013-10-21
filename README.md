@@ -374,10 +374,9 @@ log4j.appender.FILE.layout=org.apache.log4j.PatternLayout
 log4j.appender.FILE.layout.ConversionPattern=%d{yy/MM/dd HH:mm:ss} %p %c{1}: %m%n
 ```
 
-To assure that Spark will be able to find `log4j.properties`, I suggest you create a new `java-opts` file in `spark/conf/` directory and place this line inside:
+To assure that Spark will be able to find `log4j.properties`, I suggest you create a new `java-opts` file in `spark/conf/` directory and place this line inside (modify the path, of course):
 
 ```sh
-# tell Spark where log4j configuration is (modify file path, of course)
 -Dlog4j.configuration=file:///mbo/spark/conf/log4j.properties
 ```
 
