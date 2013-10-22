@@ -11,12 +11,6 @@ _The tutorial covers Spark setup on Ubuntu 12.04:_
 - standalone cluster setup (one master and 4 slaves on a single machine)
 - running the `math.PI` approximation job on a standalone cluster
 
-The tutorial does not cover reading from _HDFS_.
-
-The next part of this (soon to be) series will cover Spark setup in Eclipse.  
-
-Although I have a handful of ideas for more sequels, we'll see what (if any) I'll actually get to cover ([Mesos](http://mesos.apache.org/), Bagel, MLlib, [Zookeeper](http://zookeeper.apache.org/), Spark integration with: _Hadoop, [Kafka](http://kafka.apache.org/), [Kiji](http://www.kiji.org/), [Storm](http://mbonaci.github.io/mbo-storm) ..._).
-
 ### My setup
 _Before installing Spark:_
 - Ubuntu 12.04 LTS 32-bit
@@ -450,3 +444,18 @@ So let me present you with the list of software (all open source) that was insta
 - Dough Lea's concurrent (advanced util.concurrent)
 - Colt 1.2.0 (math/stat/analysis lib used at Cern)
 - Apache Commons, Velocity, Log4j, Slf4j
+  
+  
+_Interesting topics to cover:_  
+
+**Spark family:**  
+ - [Mesos](http://mesos.apache.org/)
+ - Bagel (graph computations)
+ - MLlib (machine learning)
+ - Streaming
+
+**Spark integration with:**  
+ - [Hadoop](http://hadoop.apache.org/)
+ - [Kafka](http://kafka.apache.org/)
+ - [Kiji](http://www.kiji.org/)
+ - [Storm](http://storm-project.org)
