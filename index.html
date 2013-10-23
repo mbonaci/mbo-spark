@@ -3,32 +3,32 @@
   <head>
     <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+
     <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
     <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
     <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
 
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-
-    <title>Spark by mbonaci</title>
+    <title>Spark standalone cluster tutorial by mbonaci</title>
   </head>
 
   <body>
+
     <header>
-      <div class="inner">
-        <h1>Spark</h1>
-        <h2>Spark exploration</h2>
-        <a href="https://github.com/mbonaci/mbo-spark" class="button"><small>View project on</small>GitHub</a>
+      <div class="container">
+        <h1>Spark standalone cluster tutorial</h1>
+        <h2>Spark from the ground up</h2>
+
+        <section id="downloads">
+          <a href="https://github.com/mbonaci/mbo-spark/zipball/master" class="btn">Download as .zip</a>
+          <a href="https://github.com/mbonaci/mbo-spark/tarball/master" class="btn">Download as .tar.gz</a>
+          <a href="https://github.com/mbonaci/mbo-spark" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
+        </section>
       </div>
     </header>
 
-    <div id="content-wrapper">
-      <div class="inner clearfix">
-        <section id="main-content">
-          <h2>
+    <div class="container">
+      <section id="main_content">
+        <h2>
 <a name="getting-started-with-spark" class="anchor" href="#getting-started-with-spark"><span class="octicon octicon-link"></span></a>Getting started with Spark</h2>
 
 <p>This tutorial was written in <em>October 2013.</em><br>
@@ -37,18 +37,12 @@ At the time, the current development version of <em>Spark</em> was <strong>0.9.0
 <p><em>The tutorial covers Spark setup on Ubuntu 12.04:</em></p>
 
 <ul>
-<li>installation of all Spark prerequisites</li>
+<li>installation of Spark prerequisites</li>
 <li>Spark build and installation</li>
 <li>basic Spark configuration</li>
 <li>standalone cluster setup (one master and 4 slaves on a single machine)</li>
 <li>running the <code>math.PI</code> approximation job on a standalone cluster</li>
-</ul><p>The tutorial does not cover reading from <em>HDFS</em>.</p>
-
-<p>The next part of this (soon to be) series will cover Spark setup in Eclipse.  </p>
-
-<p>Although I have a handful of ideas for more sequels, we'll see what (if any) I'll actually get to cover (<a href="http://mesos.apache.org/">Mesos</a>, Bagel, MLlib, <a href="http://zookeeper.apache.org/">Zookeeper</a>, Spark integration with: <em>Hadoop, <a href="http://kafka.apache.org/">Kafka</a>, <a href="http://www.kiji.org/">Kiji</a>, <a href="http://mbonaci.github.io/mbo-storm">Storm</a> ...</em>).</p>
-
-<h3>
+</ul><h3>
 <a name="my-setup" class="anchor" href="#my-setup"><span class="octicon octicon-link"></span></a>My setup</h3>
 
 <p><em>Before installing Spark:</em></p>
@@ -86,8 +80,8 @@ Scala API provides a way to write concise, higher level routines that effectivel
 <span class="n">distData</span><span class="k">:</span> <span class="kt">spark.RDD</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="n">spark</span><span class="o">.</span><span class="nc">ParallelCollection</span><span class="k">@</span><span class="mi">88</span><span class="n">eebe8e</span>  <span class="c1">// repl output</span>
 </pre></div>
 
-<h2>
-<a name="what-the-hell-is-rdd" class="anchor" href="#what-the-hell-is-rdd"><span class="octicon octicon-link"></span></a>What the hell is RDD?</h2>
+<h3>
+<a name="what-the-hell-is-rdd" class="anchor" href="#what-the-hell-is-rdd"><span class="octicon octicon-link"></span></a>What the hell is RDD?</h3>
 
 <p><strong>Resilient Distributed Dataset</strong> is a collection that has been distributed <em>all over</em> the Spark cluster. RDDs' main purpose is to support higher-level, parallel operations on data in a straightforward manner.<br>
 There are currently two types of RDDs: <strong>parallelized collections</strong>, which take an existing Scala collection and run operations on it in parallel, and <strong>Hadoop</strong> datasets, which run functions on each record of a file in <em>HDFS</em> (or any other storage system supported by <em>Hadoop</em>).</p>
@@ -106,7 +100,7 @@ There are currently two types of RDDs: <strong>parallelized collections</strong>
 <p>We probably don't need Oracle's Java, but I had some weird problems while building Spark with OpenJDK - presumably due to the fact that open-jdk places jars in <code>/usr/share/java</code>, I'm not really sure, but installation of oracle-java effectively solved all those problems, so I haven't investigated any further what exactly happened there.</p>
 </blockquote>
 
-<p>Here's how:</p>
+<p>Here's how:  </p>
 
 <div class="highlight highlight-sh"><pre><span class="c"># you may or may not want to remove open-jdk (not necessary):</span>
 sudo apt-get purge openjdk*
@@ -122,7 +116,7 @@ sudo apt-get install oracle-java6-installer
 </pre></div>
 
 <p>That should install java and make it default, all in one go.<br>
-If you check with:</p>
+If you check with:  </p>
 
 <div class="highlight highlight-sh"><pre><span class="nb">cd</span> /etc/alternatives
 ls -lat
@@ -150,7 +144,7 @@ file /etc/alternatives/java
 <span class="c"># /etc/alternatives/java: symbolic link to `/usr/lib/jvm/java-6-oracle/jre/bin/java'</span>
 </pre></div>
 
-<p><strong>Check/set <code>JAVA_HOME</code></strong></p>
+<p><strong>Check/set <code>JAVA_HOME</code></strong>  </p>
 
 <p>For a good measure, I like to set <code>JAVA_HOME</code> explicitly (<em>Spark</em> checks for its existence).</p>
 
@@ -197,7 +191,7 @@ scala -version
 Scala code runner version 2.9.3 -- Copyright 2002-2011, LAMP/EPFL
 </pre></div>
 
-<p><strong>Check/set <code>SCALA_HOME</code></strong></p>
+<p><strong>Check/set <code>SCALA_HOME</code></strong>  </p>
 
 <div class="highlight highlight-sh"><pre><span class="c"># I'll set SCALA_HOME only for my user sessions</span>
 <span class="c"># who knows, maybe my wife will like to use another version :)</span>
@@ -207,8 +201,10 @@ Scala code runner version 2.9.3 -- Copyright 2002-2011, LAMP/EPFL
 <span class="nb">source</span> ~/.pam_environment
 </pre></div>
 
-<p><strong>Install Maven</strong>
-<em>Skip if you'll choose to install Spark from binaries (see the next section for more info)</em>
+<h3>
+<a name="install-maven" class="anchor" href="#install-maven"><span class="octicon octicon-link"></span></a>Install Maven</h3>
+
+<p><em>Skip if you'll choose to install Spark from binaries (see the next section for more info)</em>
 This one is dead simple: </p>
 
 <div class="highlight highlight-sh"><pre>sudo apt-get install maven
@@ -218,11 +214,14 @@ This one is dead simple: </p>
 It is flat out awful that a dependency &amp; build management tool may become so bloated that it <strong>weighs 146MB</strong>, but that's a whole <a href="https://github.com/mbonaci/mbo-storm/wiki/Storm-setup-in-Eclipse-with-Maven,-Git-and-GitHub#a-note-about-maven">different story</a>...</p>
 
 <h2>
-<a name="installing-spark" class="anchor" href="#installing-spark"><span class="octicon octicon-link"></span></a>Installing Spark</h2>
+<a name="install-spark" class="anchor" href="#install-spark"><span class="octicon octicon-link"></span></a>Install Spark</h2>
 
 <p>We'll try, like a couple of hoodlums, to build the cutting edge, development version of Spark ourselves. Screw binaries, right :)  </p>
 
-<p>If you were to say that this punk move will just complicate things, you wouldn't be far from truth. So, if you want to simplify things a bit, and avoid possible dev-version bugs down the road, go ahead and download (and install) Spark binaries from <a href="http://spark.incubator.apache.org/downloads.html">here</a>. If, on the other hand, you're not scared, keep following instructions. Just kidding. No, honestly, I really suggest that you use binaries (and skip to <a href="#omg-i-have-a-running-spark-in-my-home">OMG! section</a>).</p>
+<p>If you were to say that this punk move will just complicate things, you wouldn't be far from truth. So, if you'd like to simplify things a bit, and avoid possible alpha-version bugs down the road, go ahead and download (and install) Spark binaries from <a href="http://spark.incubator.apache.org/downloads.html">here</a>.<br>
+If, on the other hand, you're not scared, keep following instructions.<br>
+Just kidding.<br>
+No, honestly, I really suggest that you use binaries (and skip to <a href="#omg-i-have-a-running-spark-in-my-home">OMG! section</a>).</p>
 
 <blockquote>
 <p>Back to the story, so my grandma was building Spark from source the other day and she noticed a couple of build errors...</p>
@@ -257,7 +256,7 @@ mvn -Phadoop2-yarn -Dhadoop.version<span class="o">=</span>2.0.5-alpha -Dyarn.ve
 </pre></div>
 
 <blockquote>
-<p>If you did everything right, the build process should complete without a glitch, in about 15 to 30 minutes (downloads take the most of that time), depending on your hardware. The only type of notifications should be Scala deprecation and duplicate class warnings (both can be ignored).</p>
+<p>If you did everything right, the build process should complete without a glitch, in about 15 to 30 minutes (downloads take the majority of that time), depending on your hardware. The only type of notifications should be Scala deprecation and duplicate class warnings, but both can be ignored.</p>
 </blockquote>
 
 <p>You should see something like this by the end of the compilation process:</p>
@@ -280,14 +279,14 @@ And this is the same thing from Xubuntu, with Core-i5-Duo 3.2GHz and 4GB of RAM:
 <p>... IN MY HOME, in my bedroom, where my wife sleeps! Where my children come to play with their toys. In my home.</p>
 </blockquote>
 
-<p>Yes, that was my general feeling when I first connected to a master with Scala interpreter:</p>
+<p>Yes, that was my general feeling when I first connected to a Spark master with Scala repl:</p>
 
 <p><img src="https://raw.github.com/mbonaci/mbo-spark/master/resources/spark-repl.png" alt="spark-repl"></p>
 
 <h3>
 <a name="how-to-get-there" class="anchor" href="#how-to-get-there"><span class="octicon octicon-link"></span></a>How to get there</h3>
 
-<p>OK, we installed all the prerequisites and successfully built Spark. Now it's finally time to have some fun with it.</p>
+<p>OK, we installed all the prerequisites and successfully built Spark. Now, it's finally time to have some fun with it.</p>
 
 <p>To get the ball rolling, start the Spark master:</p>
 
@@ -299,7 +298,7 @@ starting org.apache.spark.deploy.master.Master, logging to /home/mbo/spark/bin/.
 logs/spark-mbo-org.apache.spark.deploy.master.Master-1-mbo-ubuntu-vbox.out
 </pre></div>
 
-<p>if you need more info on how the startup process works, take a look <a href="http://spark.incubator.apache.org/docs/latest/spark-standalone.html">here</a>.</p>
+<p>If you need more info on how the startup process works, take a look <a href="http://spark.incubator.apache.org/docs/latest/spark-standalone.html">here</a>.  </p>
 
 <p>To check out master's web console, open http://localhost:8080/. Nice, ha?</p>
 
@@ -324,8 +323,8 @@ ssh-keygen
 <span class="c"># to add your key to authorized keys list on your machine:</span>
 ssh-copy-id mbo@mbo-xubuntu
 
-<span class="c"># where mbo is your username and mbo-xubuntu is the host name</span>
-<span class="c"># confirm by typing 'yes' and then enter your login password when asked</span>
+<span class="c"># where 'mbo' is your username and 'mbo-xubuntu' is your localhost's name</span>
+<span class="c"># confirm by typing 'yes' and then enter your login password, when asked</span>
 </pre></div>
 
 <p>That should look similar to this:</p>
@@ -338,7 +337,7 @@ ssh-copy-id mbo@mbo-xubuntu
 <p>Be careful not to open a door for malicious intrusion attempts. If you're new to <code>ssh</code>, <a href="https://help.ubuntu.com/community/SSH">here</a> is a short and sweet intro to <em>openssh</em>.</p>
 </blockquote>
 
-<p>If you don't have <code>ssh</code> server installed, you'll need to get it:</p>
+<p>If you don't have <code>ssh</code> server installed, you'll need to get one:</p>
 
 <div class="highlight highlight-sh"><pre><span class="c"># to check whether the openssh server is installed</span>
 service ssh status
@@ -368,7 +367,7 @@ cp ./conf/spark-env.sh.template ./conf/spark-env.sh
 </pre></div>
 
 <blockquote>
-<p>Now we've hopefully prepared everything to finally launch 4 slave workers, on the same machine where our master is already lurking around (slaves will be assigned with random ports, thus avoiding port collision).</p>
+<p>Now we've hopefully prepared everything to finally launch 4 slave workers, on the same machine where our master is already lurking around (slaves will be assigned random ports, both for <em>repl</em> and <em>http</em> access, thus avoiding port collision).</p>
 </blockquote>
 
 <div class="highlight highlight-sh"><pre><span class="c"># to start slave workers:</span>
@@ -390,7 +389,7 @@ cp ./conf/spark-env.sh.template ./conf/spark-env.sh
 <h3>
 <a name="starting-and-stopping-the-whole-cluster" class="anchor" href="#starting-and-stopping-the-whole-cluster"><span class="octicon octicon-link"></span></a>Starting and stopping the whole cluster</h3>
 
-<p>Since you're going to start and stop master and slaves multiple times, let's quickly go through the simplified procedure of starting and stopping the cluster with one command:</p>
+<p>Since you're going to start and stop master and slaves multiple times, let's quickly go through the simplified procedure of starting and stopping the whole cluster with one command:</p>
 
 <div class="highlight highlight-sh"><pre><span class="c"># first, let's stop the master and all the slaves:</span>
 ./bin/stop-all.sh
@@ -404,7 +403,7 @@ cp ./conf/spark-env.sh.template ./conf/spark-env.sh
 </h2>
 
 <p>I regularly configure log4j to write to a log file, instead of a console.
-If you'd like to setup the same thing yourself, you'll need to modify <code>log4j.properties</code> located in <code>spark/conf/</code> directory like this:</p>
+If you'd like to set up the same thing yourself, you'll need to modify <code>log4j.properties</code> located in <code>spark/conf/</code> directory. Something like this:</p>
 
 <div class="highlight highlight-sh"><pre><span class="c"># Initialize root logger</span>
 log4j.rootLogger<span class="o">=</span>INFO, FILE
@@ -425,10 +424,9 @@ log4j.appender.FILE.layout<span class="o">=</span>org.apache.log4j.PatternLayout
 log4j.appender.FILE.layout.ConversionPattern<span class="o">=</span>%d<span class="o">{</span>yy/MM/dd HH:mm:ss<span class="o">}</span> %p %c<span class="o">{</span>1<span class="o">}</span>: %m%n
 </pre></div>
 
-<p>To assure that Spark will be able to find <code>log4j.properties</code>, I suggest you create a new <code>java-opts</code> file in <code>spark/conf/</code> directory and place a single line inside:</p>
+<p>To assure that Spark will be able to find <code>log4j.properties</code>, I suggest you create a new <code>java-opts</code> file in <code>spark/conf/</code> directory and place this line inside (modify the path, of course):</p>
 
-<div class="highlight highlight-sh"><pre><span class="c"># tell Spark where log4j configuration is (modify file path, of course)</span>
--Dlog4j.configuration<span class="o">=</span>file:///mbo/spark/conf/log4j.properties
+<div class="highlight highlight-sh"><pre>-Dlog4j.configuration<span class="o">=</span>file:///mbo/spark/conf/log4j.properties
 </pre></div>
 
 <blockquote>
@@ -438,8 +436,8 @@ log4j.appender.FILE.layout.ConversionPattern<span class="o">=</span>%d<span clas
 <h2>
 <a name="playing-with-spark" class="anchor" href="#playing-with-spark"><span class="octicon octicon-link"></span></a>Playing with Spark</h2>
 
-<p>Now we are ready for our first interactive session with Spark.
-To launch Spark Scala interpreter:</p>
+<p>We are finally ready for our first interactive session with Spark.<br>
+To launch Spark Scala repl:</p>
 
 <div class="highlight highlight-sh"><pre><span class="c"># launch scala repl</span>
 <span class="nv">MASTER</span><span class="o">=</span>spark://localhost:7077 ./spark-shell
@@ -450,7 +448,7 @@ To launch Spark Scala interpreter:</p>
 <h3>
 <a name="hello-spark" class="anchor" href="#hello-spark"><span class="octicon octicon-link"></span></a>Hello Spark</h3>
 
-<p>As a demonstration, let's use our Spark cluster to approximate <em>PI</em> using <a href="http://hadoop.apache.org/docs/stable/mapred_tutorial.html">MapReduce</a>:  </p>
+<p>As a demonstration, let's use our Spark cluster to approximate <em>PI</em> using <a href="">MapReduce algorithm</a>:  </p>
 
 <div class="highlight highlight-scala"><pre><span class="cm">/* throwing darts and examining coordinates */</span>
 <span class="k">val</span> <span class="nc">NUM_SAMPLES</span> <span class="k">=</span> <span class="mi">100000</span>
@@ -508,26 +506,26 @@ So let me present you with the list of software (all open source) that was insta
 <li>Dough Lea's concurrent (advanced util.concurrent)</li>
 <li>Colt 1.2.0 (math/stat/analysis lib used at Cern)</li>
 <li>Apache Commons, Velocity, Log4j, Slf4j</li>
+</ul><p><em>Interesting topics to cover:</em>  </p>
+
+<p><strong>Spark family:</strong>  </p>
+
+<ul>
+<li><a href="http://mesos.apache.org/">Mesos</a></li>
+<li>Bagel (graph computations)</li>
+<li>MLlib (machine learning)</li>
+<li>Streaming</li>
+</ul><p><strong>Spark integration with:</strong>  </p>
+
+<ul>
+<li><a href="http://hadoop.apache.org/">Hadoop</a></li>
+<li><a href="http://kafka.apache.org/">Kafka</a></li>
+<li><a href="http://www.kiji.org/">Kiji</a></li>
+<li><a href="http://storm-project.org">Storm</a></li>
 </ul>
-        </section>
-
-        <aside id="sidebar">
-          <a href="https://github.com/mbonaci/mbo-spark/zipball/master" class="button">
-            <small>Download</small>
-            .zip file
-          </a>
-          <a href="https://github.com/mbonaci/mbo-spark/tarball/master" class="button">
-            <small>Download</small>
-            .tar.gz file
-          </a>
-
-          <p class="repo-owner"><a href="https://github.com/mbonaci/mbo-spark"></a> is maintained by <a href="https://github.com/mbonaci">mbonaci</a>.</p>
-
-          <p>This page was generated by <a href="pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
-        </aside>
-      </div>
+      </section>
     </div>
 
-  
+    
   </body>
 </html>
