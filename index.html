@@ -37,7 +37,7 @@ At the time, the current development version of <em>Spark</em> was <strong>0.9.0
 <p><em>The tutorial covers Spark setup on Ubuntu 12.04:</em></p>
 
 <ul>
-<li>installation of Spark prerequisites</li>
+<li>installation of all Spark prerequisites</li>
 <li>Spark build and installation</li>
 <li>basic Spark configuration</li>
 <li>standalone cluster setup (one master and 4 slaves on a single machine)</li>
@@ -380,11 +380,11 @@ cp ./conf/spark-env.sh.template ./conf/spark-env.sh
 
 <p>If you now refresh master's web console, you should see 4 slaves listed there:</p>
 
-<p><img src="https://raw.github.com/mbonaci/mbo-spark/master/resources/spark-master-web-console-4-slaves.gif" alt="4 slaves in web console"></p>
+<p><img src="https://raw.github.com/mbonaci/mbo-spark/master/resources/spark-master-web-console-4-slaves.png" alt="4 slaves in web console"></p>
 
 <p>Clicking on a slave's link opens its web console:</p>
 
-<p><img src="https://raw.github.com/mbonaci/mbo-spark/master/resources/spark-slaves-web-console.gif" alt="slave web console"></p>
+<p><img src="https://raw.github.com/mbonaci/mbo-spark/master/resources/spark-slaves-web-console.png" alt="slave web console"></p>
 
 <h3>
 <a name="starting-and-stopping-the-whole-cluster" class="anchor" href="#starting-and-stopping-the-whole-cluster"><span class="octicon octicon-link"></span></a>Starting and stopping the whole cluster</h3>
@@ -462,6 +462,21 @@ To launch Spark Scala repl:</p>
 </pre></div>
 
 <p>If you're not comfortable with Scala, I recently wrote a <a href="http://mbonaci.github.io/scala/">Java developer's Scala cheat sheet</a> (based on Programming in Scala SE book, by Martin Odersky, whose first edition is freely available <a href="http://www.artima.com/pins1ed/">online</a>), which is basically a big reference card, where you can look up almost any Scala topic you come across.</p>
+
+<h2>
+<a name="setting-up-spark-development-environment-in-eclipse" class="anchor" href="#setting-up-spark-development-environment-in-eclipse"><span class="octicon octicon-link"></span></a>Setting up Spark development environment in Eclipse</h2>
+
+<p>Most Spark developers use IntelliJ IDEA, but since I don't have enough will power to switch over, I'm still with Eclipse (when it comes to JVM-related development, that is).<br>
+All you need to do to prepare Spark for Eclipse is run:</p>
+
+<div class="highlight highlight-sh"><pre>sbt/sbt eclipse
+</pre></div>
+
+<p><img src="https://raw.github.com/mbonaci/mbo-spark/master/resources/sbt-eclipse.PNG" alt="sbt eclipse"></p>
+
+<p>Which should hopefully finish like this:</p>
+
+<p><img src="https://raw.github.com/mbonaci/mbo-spark/master/resources/sbt-eclipse-success.PNG" alt="sbt eclipse success"></p>
 
 <h2>
 <a name="what-spark-uses-under-the-hood" class="anchor" href="#what-spark-uses-under-the-hood"><span class="octicon octicon-link"></span></a>What Spark uses under the hood?</h2>
