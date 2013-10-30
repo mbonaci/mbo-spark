@@ -326,11 +326,11 @@ You should see something similar to this:
 
 If you now refresh master's web console, you should see 4 slaves listed there:
 
-![4 slaves in web console](https://raw.github.com/mbonaci/mbo-spark/master/resources/spark-master-web-console-4-slaves.gif)
+![4 slaves in web console](https://raw.github.com/mbonaci/mbo-spark/master/resources/spark-master-web-console-4-slaves.png)
 
 Clicking on a slave's link opens its web console:
 
-![slave web console](https://raw.github.com/mbonaci/mbo-spark/master/resources/spark-slaves-web-console.gif)
+![slave web console](https://raw.github.com/mbonaci/mbo-spark/master/resources/spark-slaves-web-console.png)
 
 ### Starting and stopping the whole cluster
 
@@ -405,6 +405,21 @@ println("Pi is roughly " + 4 * count / NUM_SAMPLES)
 ```
 
 If you're not comfortable with Scala, I recently wrote a [Java developer's Scala cheat sheet](http://mbonaci.github.io/scala/) (based on Programming in Scala SE book, by Martin Odersky, whose first edition is freely available [online](http://www.artima.com/pins1ed/)), which is basically a big reference card, where you can look up almost any Scala topic you come across.
+
+## Setting up Spark development environment in Eclipse
+
+Most Spark developers use IntelliJ IDEA, but since I don't have enough will power to switch over, I'm still with Eclipse (when it comes to JVM-related development, that is).  
+All you need to do to prepare Spark for Eclipse is run:
+
+```sh
+sbt/sbt eclipse
+```
+
+![sbt eclipse](https://raw.github.com/mbonaci/mbo-spark/master/resources/sbt-eclipse.PNG)
+
+Which should hopefully finish like this:
+
+![sbt eclipse success](https://raw.github.com/mbonaci/mbo-spark/master/resources/sbt-eclipse-success.PNG)
 
 ## What Spark uses under the hood?
 
