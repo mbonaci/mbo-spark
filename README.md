@@ -390,26 +390,29 @@ MASTER=spark://localhost:7077 ./spark-shell
 
 ### Hello Spark
 
-As a demonstration, let's use our Spark cluster to approximate _PI_ using [MapReduce algorithm]():  
+As a demonstration, let's use our Spark cluster to approximate _PI_ using [MapReduce algorithm](http://en.wikipedia.org/wiki/MapReduce):  
 
 ```scala
 /* throwing darts and examining coordinates */
 val NUM_SAMPLES = 100000
-val count = spark.parallelize(1 to NUM_SAMPLES).map(i =>
-  val x = Math.random
-  val y = Math.random
+val count = spark.parallelize(1 to NUM_SAMPLES).map{i =>
+  val x = Math.random * 2 - 1
+  val y = Math.random * 2 - 1
   if (x * x + y * y < 1) 1.0 else 0.0
-).reduce(_ + _)
+}.reduce(_ + _)
 
 println("Pi is roughly " + 4 * count / NUM_SAMPLES)
 ```
+
+> The PI estimation algorithm is based on the fact that "throwing a dart" a large number of times (1M), each time striking randomly inside a unit square ((0, 0) to (1, 1)). We pick random points in the unit square ((0, 0) to (1,1)) and see how many fall in the unit circle. The fraction should be π / 4
 
 If you're not comfortable with Scala, I recently wrote a [Java developer's Scala cheat sheet](http://mbonaci.github.io/scala/) (based on Programming in Scala SE book, by Martin Odersky, whose first edition is freely available [online](http://www.artima.com/pins1ed/)), which is basically a big reference card, where you can look up almost any Scala topic you come across.
 
 ## Setting up Spark development environment in Eclipse
 
-Most Spark developers use IntelliJ IDEA, but since I don't have enough will power to switch over, I'm still with Eclipse (when it comes to JVM-related development, that is).  
-All you need to do to prepare Spark for Eclipse is run:
+Most Spark developers use IntelliJ IDEA, but since I don't have enough will power to switch over, I'm still with Eclipse (for JVM-related stuff).  
+
+Luckily, all you need to do to prepare Spark for opening in Eclipse is run:
 
 ```sh
 sbt/sbt eclipse
@@ -425,7 +428,7 @@ Which should hopefully finish like this:
 
 Since you're still reading this, I'll go ahead and assume that you're like me. You don't want to **just use** something, you like to know what you're working with and how it all works together.  
 ..
-So let me present you with the list of software (all open source) that was installed automatically, alongside Spark (I wrote a short explanation besides ones that were unknown to me):
+So let me present you with the list of software (all open source) that was installed automatically, alongside Spark:
 
 ### My setup - _post festum_
 - Hadoop 2.0.5-alpha (with Yarn)
