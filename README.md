@@ -1,6 +1,9 @@
 Getting started with Spark
 -----
 
+This article, deployed on GHPages, can be accessed [here](http://mbonaci.github.io/mbo-spark).
+
+
 This tutorial was written in _October 2013._  
 At the time, the current development version of _Spark_ was **0.9.0.**  
 
