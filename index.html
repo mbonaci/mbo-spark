@@ -448,26 +448,31 @@ To launch Spark Scala repl:</p>
 <h3>
 <a name="hello-spark" class="anchor" href="#hello-spark"><span class="octicon octicon-link"></span></a>Hello Spark</h3>
 
-<p>As a demonstration, let's use our Spark cluster to approximate <em>PI</em> using <a href="">MapReduce algorithm</a>:  </p>
+<p>As a demonstration, let's use our Spark cluster to approximate <em>PI</em> using <a href="http://en.wikipedia.org/wiki/MapReduce">MapReduce algorithm</a>:  </p>
 
 <div class="highlight highlight-scala"><pre><span class="cm">/* throwing darts and examining coordinates */</span>
 <span class="k">val</span> <span class="nc">NUM_SAMPLES</span> <span class="k">=</span> <span class="mi">100000</span>
-<span class="k">val</span> <span class="n">count</span> <span class="k">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">parallelize</span><span class="o">(</span><span class="mi">1</span> <span class="n">to</span> <span class="nc">NUM_SAMPLES</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="n">i</span> <span class="k">=&gt;</span>
-  <span class="k">val</span> <span class="n">x</span> <span class="k">=</span> <span class="nc">Math</span><span class="o">.</span><span class="n">random</span>
-  <span class="k">val</span> <span class="n">y</span> <span class="k">=</span> <span class="nc">Math</span><span class="o">.</span><span class="n">random</span>
+<span class="k">val</span> <span class="n">count</span> <span class="k">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">parallelize</span><span class="o">(</span><span class="mi">1</span> <span class="n">to</span> <span class="nc">NUM_SAMPLES</span><span class="o">).</span><span class="n">map</span><span class="o">{</span><span class="n">i</span> <span class="k">=&gt;</span>
+  <span class="k">val</span> <span class="n">x</span> <span class="k">=</span> <span class="nc">Math</span><span class="o">.</span><span class="n">random</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">-</span> <span class="mi">1</span>
+  <span class="k">val</span> <span class="n">y</span> <span class="k">=</span> <span class="nc">Math</span><span class="o">.</span><span class="n">random</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">-</span> <span class="mi">1</span>
   <span class="k">if</span> <span class="o">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span> <span class="o">*</span> <span class="n">y</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="o">)</span> <span class="mf">1.0</span> <span class="k">else</span> <span class="mf">0.0</span>
-<span class="o">).</span><span class="n">reduce</span><span class="o">(</span><span class="k">_</span> <span class="o">+</span> <span class="k">_</span><span class="o">)</span>
+<span class="o">}.</span><span class="n">reduce</span><span class="o">(</span><span class="k">_</span> <span class="o">+</span> <span class="k">_</span><span class="o">)</span>
 
 <span class="n">println</span><span class="o">(</span><span class="s">"Pi is roughly "</span> <span class="o">+</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">count</span> <span class="o">/</span> <span class="nc">NUM_SAMPLES</span><span class="o">)</span>
 </pre></div>
+
+<blockquote>
+<p>The PI estimation algorithm is based on the fact that "throwing a dart" a large number of times (1M), each time striking randomly inside a unit square ((0, 0) to (1, 1)). We pick random points in the unit square ((0, 0) to (1,1)) and see how many fall in the unit circle. The fraction should be π / 4</p>
+</blockquote>
 
 <p>If you're not comfortable with Scala, I recently wrote a <a href="http://mbonaci.github.io/scala/">Java developer's Scala cheat sheet</a> (based on Programming in Scala SE book, by Martin Odersky, whose first edition is freely available <a href="http://www.artima.com/pins1ed/">online</a>), which is basically a big reference card, where you can look up almost any Scala topic you come across.</p>
 
 <h2>
 <a name="setting-up-spark-development-environment-in-eclipse" class="anchor" href="#setting-up-spark-development-environment-in-eclipse"><span class="octicon octicon-link"></span></a>Setting up Spark development environment in Eclipse</h2>
 
-<p>Most Spark developers use IntelliJ IDEA, but since I don't have enough will power to switch over, I'm still with Eclipse (when it comes to JVM-related development, that is).<br>
-All you need to do to prepare Spark for Eclipse is run:</p>
+<p>Most Spark developers use IntelliJ IDEA, but since I don't have enough will power to switch over, I'm still with Eclipse (for JVM-related stuff).  </p>
+
+<p>Luckily, all you need to do to prepare Spark for opening in Eclipse is run:</p>
 
 <div class="highlight highlight-sh"><pre>sbt/sbt eclipse
 </pre></div>
@@ -483,7 +488,7 @@ All you need to do to prepare Spark for Eclipse is run:</p>
 
 <p>Since you're still reading this, I'll go ahead and assume that you're like me. You don't want to <strong>just use</strong> something, you like to know what you're working with and how it all works together.<br>
 ..
-So let me present you with the list of software (all open source) that was installed automatically, alongside Spark (I wrote a short explanation besides ones that were unknown to me):</p>
+So let me present you with the list of software (all open source) that was installed automatically, alongside Spark:</p>
 
 <h3>
 <a name="my-setup---post-festum" class="anchor" href="#my-setup---post-festum"><span class="octicon octicon-link"></span></a>My setup - <em>post festum</em>
