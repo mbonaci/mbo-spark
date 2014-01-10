@@ -480,3 +480,7 @@ _Interesting topics to cover:_
  - [Kafka](http://kafka.apache.org/)
  - [Kiji](http://www.kiji.org/)
  - [Storm](http://storm-project.org)
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/mbonaci/mbo-spark/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
