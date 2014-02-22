@@ -1,7 +1,7 @@
 Getting started with Spark
 -----
 
-This article, deployed on GHPages, can be accessed [here](http://mbonaci.github.io/mbo-spark).
+A nicer version of this article can be accessed [here](http://mbonaci.github.io/mbo-spark).
 
 
 This tutorial was written in _October 2013._  
